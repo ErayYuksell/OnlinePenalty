@@ -59,7 +59,7 @@ public class SoccerPlayerController : MonoBehaviour
     {
         Vector3 direction = (targetPos - ball.position).normalized;
         Vector3 finalForce = direction * kickForce; // Final kuvveti belirleniyor
-        ballController.KickBall(targetPos, 2f, 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
+        ballController.KickBall(targetPos, gameManager.shootColorSelection.BallMovementHightByColor(), 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
         Debug.Log("Top hareketi basladi");
 
 

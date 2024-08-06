@@ -115,7 +115,7 @@ namespace OnlinePenalty
             [SerializeField] RectTransform greenPoint_1;
             [SerializeField] RectTransform greenPoint_2;
 
-            public float number;
+            float force;
             public void Init(GameManager gameManager)
             {
                 this.gameManager = gameManager;
@@ -159,18 +159,35 @@ namespace OnlinePenalty
             {
                 switch (GetArrowColor())
                 {
-                    default: return 0.5f;
-                    case "Red":
-
+                    default: return 2f;
+                    case "Fail":
+                        force = 2;
                         break;
-                    case "Blue":
-
+                    case "Green_1":
+                        force = 3;
                         break;
-                    case "Green":
-
+                    case "Green_2":
+                        force = 3;
                         break;
                 }
-                return number;
+                return force;
+            }
+            public float BallMovementHightByColor()
+            {
+                switch (GetArrowColor())
+                {
+                    default: return 1f;
+                    case "Fail":
+                        force = 1;
+                        break;
+                    case "Green_1":
+                        force = 2;
+                        break;
+                    case "Green_2":
+                        force = 2;
+                        break;
+                }
+                return force;
             }
 
             private bool IsWithinBounds(Vector3 arrowPos, RectTransform rect)
