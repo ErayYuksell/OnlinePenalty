@@ -2,8 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 namespace OnlinePenalty
 {
@@ -12,17 +14,18 @@ namespace OnlinePenalty
         public static GameManager Instance;
         public TargetMovement targetMovement;
         public ShootColorSelection shootColorSelection;
-        public MultiplayerOptions multiplayerOptions;
+        public SingleAndMultiplayerOptions singleAndMultiplayerOptions;
 
-      
+
         private void Awake()
         {
             targetMovement.Init(this);
             shootColorSelection.Init(this);
-            multiplayerOptions.Init(this);
+            singleAndMultiplayerOptions.Init(this);
 
             if (Instance == null)
             {
+                //DontDestroyOnLoad(gameObject);
                 Instance = this;
             }
             else
@@ -34,6 +37,14 @@ namespace OnlinePenalty
         {
             targetMovement.ChooseRandomPoint();
             shootColorSelection.MovementArrow();
+
+            singleAndMultiplayerOptions.StartCountdownTimer();
+            singleAndMultiplayerOptions.LoadScore();
+        }
+
+        private void OnApplicationQuit()
+        {
+            PlayerPrefs.DeleteKey("Score"); // Oyunu kapatırken skoru sıfırla
         }
 
         [Serializable]
@@ -94,12 +105,12 @@ namespace OnlinePenalty
         public class ShootColorSelection
         {
             GameManager gameManager;
-            
+
             [SerializeField] RectTransform Arrow;
             [SerializeField] float barStart;
             [SerializeField] float barFinish;
             private Tween ArrowTween;
-           
+
             [SerializeField] RectTransform failPoint;
             [SerializeField] RectTransform greenPoint_1;
             [SerializeField] RectTransform greenPoint_2;
@@ -150,13 +161,13 @@ namespace OnlinePenalty
                 {
                     default: return 0.5f;
                     case "Red":
-                     
+
                         break;
                     case "Blue":
-                       
+
                         break;
                     case "Green":
-                      
+
                         break;
                 }
                 return number;
@@ -172,14 +183,84 @@ namespace OnlinePenalty
 
         [Serializable]
 
-        public class MultiplayerOptions
+        public class SingleAndMultiplayerOptions
         {
+
             GameManager gameManager;
+            [SerializeField] TextMeshProUGUI countdownText;
+            int countdown = 10; // Başlangıç değerini 10 olarak ayarlayın
+            Coroutine countdownCoroutine;
+
+            [SerializeField] TextMeshProUGUI scoreText;
+            int score = 0;
 
             public void Init(GameManager gameManager)
             {
                 this.gameManager = gameManager;
             }
+
+            #region Singleplayer
+
+            public void StartCountdownTimer()
+            {
+                if (countdownCoroutine != null)
+                {
+                    gameManager.StopCoroutine(countdownCoroutine); // Önceki coroutine'i durdur
+                }
+                countdown = 10; // Her başlatıldığında countdown değerini sıfırla
+                countdownCoroutine = gameManager.StartCoroutine(countdownTimer());
+            }
+
+            public void StopCountdownTimer()
+            {
+                if (countdownCoroutine != null)
+                {
+                    gameManager.StopCoroutine(countdownCoroutine);
+                }
+            }
+
+            IEnumerator countdownTimer()
+            {
+                while (countdown > 0)
+                {
+                    countdownText.text = countdown.ToString();
+                    yield return new WaitForSeconds(1);
+                    countdown--;
+                }
+                countdownText.text = "0"; // Sayaç bittiğinde 0 olarak güncelle
+                if (countdown == 0)
+                {
+                    gameManager.targetMovement.StopTargetMovement();
+                    gameManager.shootColorSelection.StopArrowMovement(out Vector3 arrowPos);
+                    UIManager.Instance.CloseShootButton();
+                    UIManager.Instance.OpenFailCanvas();
+                }
+            }
+
+            public void UpdateScore()
+            {
+                score++;
+                scoreText.text = score.ToString();
+                SaveScore(); // Skoru kaydet
+            }
+
+            void SaveScore()
+            {
+                PlayerPrefs.SetInt("Score", score); // Skoru kaydet
+                PlayerPrefs.Save();
+            }
+
+            public void LoadScore()
+            {
+                if (PlayerPrefs.HasKey("Score"))
+                {
+                    score = PlayerPrefs.GetInt("Score"); // Skoru yükle
+                    scoreText.text = score.ToString();
+                }
+            }
+
+            #endregion
         }
+
     }
 }

@@ -469,7 +469,7 @@ Transform:
   m_GameObject: {fileID: 1044506804077639172}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -0, y: 0, z: -1.62}
+  m_LocalPosition: {x: -0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -492,7 +492,7 @@ Animator:
   m_GameObject: {fileID: 1044506804077639172}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b44938485e513d747a80972f5f074dd2, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bddf8e5598266354abfb9a6cd0a1fbcb, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -515,6 +515,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0a9f68db1c99e44daf295adf6981112, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  idle: {fileID: 7400000, guid: 99b5ec9388fa390499465b56082ef4e4, type: 2}
+  bodyBlockAnim: {fileID: 7400000, guid: 5d843f4ec6653324baa1d4fc4e3dc4bf, type: 2}
+  bodyBlockRightAnim: {fileID: 7400000, guid: 34880f05c2d184d4a828bff4884ec7a2, type: 2}
+  divingSave: {fileID: 7400000, guid: 858464ceec406a242b764b632a037f90, type: 2}
+  divingRightSave: {fileID: 7400000, guid: 7382e15a9efc40549a15cbc797379ae2, type: 2}
+  catchAnim: {fileID: 7400000, guid: 6fcacf38e2569784e95f522d112c2827, type: 2}
+  animations:
+  - {fileID: 7400000, guid: 5d843f4ec6653324baa1d4fc4e3dc4bf, type: 2}
+  - {fileID: 7400000, guid: 34880f05c2d184d4a828bff4884ec7a2, type: 2}
+  - {fileID: 7400000, guid: 6fcacf38e2569784e95f522d112c2827, type: 2}
+  - {fileID: 7400000, guid: 858464ceec406a242b764b632a037f90, type: 2}
+  - {fileID: 7400000, guid: 7382e15a9efc40549a15cbc797379ae2, type: 2}
+  yellowAreaParentTransform: {fileID: 0}
 --- !u!1 &1150453632107398320
 GameObject:
   m_ObjectHideFlags: 0

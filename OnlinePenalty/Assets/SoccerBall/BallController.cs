@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using OnlinePenalty;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BallController : MonoBehaviour
 {
     public static BallController Instance;
     private Rigidbody rb;
-   
+
     private void Awake()
     {
         if (Instance == null)
@@ -28,7 +30,10 @@ public class BallController : MonoBehaviour
     {
         StartCoroutine(SmoothKickBall(targetPosition, height, duration, finalForce));
     }
-
+    public void StopBallMovement()
+    {
+        StopAllCoroutines();
+    }
     private IEnumerator SmoothKickBall(Vector3 targetPosition, float height, float duration, Vector3 finalForce)
     {
         rb.isKinematic = true; // Kinematic durumu a��l�yor
@@ -53,15 +58,17 @@ public class BallController : MonoBehaviour
         // Top hedef pozisyona ula�t�ktan sonra kuvvet uygulan�yor
         //rb.AddForce(finalForce, ForceMode.Impulse);
     }
+   
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("SoccerGoal"))
+        {
+            Debug.Log("Top Aglarda");
+            StopBallMovement();
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.CompareTag("SoccerGoal") && !GameManager.Instance.IsBallInside())
-    //    {
-    //        GetComponent<SphereCollider>().enabled = false;
-    //        Debug.Log("Top Aglarda");
-    //        GameManager.Instance.UpdateScore();
-    //    }
-    //}
+            UIManager.Instance.OpenGoalCanvas();
+            GameManager.Instance.singleAndMultiplayerOptions.UpdateScore();
+        }
+    }
 
 }

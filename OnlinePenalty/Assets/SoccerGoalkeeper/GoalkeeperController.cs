@@ -16,6 +16,7 @@ namespace OnlinePenalty
         [SerializeField] AnimationClip divingSave;
         [SerializeField] AnimationClip divingRightSave;
         [SerializeField] AnimationClip catchAnim;
+        [SerializeField] List<AnimationClip> animations = new List<AnimationClip>();
         [SerializeField] Transform yellowAreaParentTransform; // Sar� alan� temsil eden transform
 
 
@@ -72,7 +73,10 @@ namespace OnlinePenalty
         //{
         //    yellowAreaParentTransform.localEulerAngles = new Vector3(0, 0, rotationZ);
         //}
-
+        public void StartSavingSingleMode()
+        {
+            animator.Play(animations[Random.Range(0, animations.Count)].name);
+        }
 
         public void StartSaving()
         {

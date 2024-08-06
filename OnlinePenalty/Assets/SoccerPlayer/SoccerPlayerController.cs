@@ -40,6 +40,10 @@ public class SoccerPlayerController : MonoBehaviour
         // targetImage hareketini durdur ve pozisyon bilgisini al
         targetPosition = gameManager.targetMovement.StopTargetMovement();
 
+        //Single icin zamani durdur 
+        gameManager.singleAndMultiplayerOptions.StopCountdownTimer();
+
+        //single icin atislari yap
         StartShooting();
     }
 
@@ -47,7 +51,7 @@ public class SoccerPlayerController : MonoBehaviour
     {
         // Animasyonu oynat
         animator.Play(penaltyKickAnim.name);
-        Debug.Log("Penalty Animasyonu calisti" + "_ActorNumber: " + PhotonNetwork.LocalPlayer.ActorNumber);
+        Debug.Log("Penalty Animasyonu calisti");
         animationFinished = false;
     }
 
@@ -56,7 +60,7 @@ public class SoccerPlayerController : MonoBehaviour
         Vector3 direction = (targetPos - ball.position).normalized;
         Vector3 finalForce = direction * kickForce; // Final kuvveti belirleniyor
         ballController.KickBall(targetPos, 2f, 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
-        Debug.Log("Top hareketi basladi" + "_ActorNumber: " + PhotonNetwork.LocalPlayer.ActorNumber);
+        Debug.Log("Top hareketi basladi");
 
 
         // Animasyon tamamland���nda yap�lacak i�lemler
@@ -69,6 +73,7 @@ public class SoccerPlayerController : MonoBehaviour
     public void OnKick()
     {
         ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
+        GoalkeeperController.Instance.StartSavingSingleMode();
     }
     // Animasyon Event tarafinda animasyonun sonunda calistiriyorum 
     public void OnAnimationComplete()

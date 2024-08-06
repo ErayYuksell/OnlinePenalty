@@ -608,7 +608,7 @@ GameObject:
   - component: {fileID: 2603528088525337693}
   m_Layer: 0
   m_Name: SoccerGoal
-  m_TagString: Untagged
+  m_TagString: SoccerGoal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -650,8 +650,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.8165255, y: 1.8654622, z: 1.1090419}
-  m_Center: {x: 0.0144000845, y: 0.9029572, z: 0.054521162}
+  m_Size: {x: 4.8165255, y: 1.8654622, z: 1.4178574}
+  m_Center: {x: 0.0144000845, y: 0.9029572, z: 0.20892859}
 --- !u!1 &9151564321356179650
 GameObject:
   m_ObjectHideFlags: 0
