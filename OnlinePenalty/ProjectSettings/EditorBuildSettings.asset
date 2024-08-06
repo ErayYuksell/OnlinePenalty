@@ -4,5 +4,20 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MenuScreen.unity
+    guid: d289422ab872d5b4c94ee779d0993178
+  - enabled: 1
+    path: Assets/Scenes/LoadingScreen.unity
+    guid: 7ec22720ae289464191c132e36db8023
+  - enabled: 1
+    path: Assets/Scenes/CreateRoomScreen.unity
+    guid: d386e7e7ba708304690a26cbe8b41ed5
+  - enabled: 1
+    path: Assets/Scenes/WaitingScreen.unity
+    guid: 79423de0e60b54e40ac5a3e6a6004949
+  - enabled: 1
+    path: Assets/Scenes/Game.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}
