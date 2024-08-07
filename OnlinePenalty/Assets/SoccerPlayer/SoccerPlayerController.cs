@@ -7,6 +7,8 @@ using OnlinePenalty;
 
 public class SoccerPlayerController : MonoBehaviour
 {
+    public static SoccerPlayerController Instance;
+
     Animator animator;
     GameManager gameManager;
     BallController ballController;
@@ -19,7 +21,17 @@ public class SoccerPlayerController : MonoBehaviour
 
     Vector3 targetPosition;
     private bool animationFinished = false;
-
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -32,18 +44,32 @@ public class SoccerPlayerController : MonoBehaviour
     // Shoot butonuna tiklandiginda calisir 
     public void OnShootButtonPressed()
     {
-        
+
         string arrowColor = gameManager.shootColorSelection.GetArrowColor();
         Debug.Log("Arrow Color: " + arrowColor);
         gameManager.shootColorSelection.StopArrowMovement();
 
         targetPosition = gameManager.targetMovement.StopTargetMovement();
 
-        //Single icin zamani durdur 
-        gameManager.singleAndMultiplayerOptions.StopCountdownTimer();
+        if (!gameManager.singleAndMultiplayerOptions.GetMultiplayerMode())
+        {
+            //Single icin zamani durdur 
+            gameManager.singleAndMultiplayerOptions.StopCountdownTimer();
 
-        //single icin atislari yap
-        StartShooting();
+            //single icin atislari yap
+            StartShooting();
+        }
+        else
+        {
+            if (gameManager.singleAndMultiplayerOptions.IsPlayer1Turn())
+            {
+                gameManager.singleAndMultiplayerOptions.IsPlayer1ButtonDone();
+            }
+            else if (gameManager.singleAndMultiplayerOptions.IsPlayer2Turn())
+            {
+                gameManager.singleAndMultiplayerOptions.IsPlayer2ButtonDone();
+            }
+        }
     }
 
     public void StartShooting()

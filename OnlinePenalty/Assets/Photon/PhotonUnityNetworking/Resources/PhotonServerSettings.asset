@@ -28,7 +28,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: 
+  DevRegion: tr
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -41,6 +41,11 @@ MonoBehaviour:
   - RespawnSpaceship
   - PunRPC_ShootBall
   - PunRPC_CountdownTimer
+  - PunRPC_countdownTimer
+  - PunRPC_UpdateScore
+  - PunRPC_IsPlayer1ButtonDone
+  - PunRPC_IsPlayer2ButtonDone
+  - PunRPC_StartShootAndSaving
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 0
+  DevRegionSetOnce: 1

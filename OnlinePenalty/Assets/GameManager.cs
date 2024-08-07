@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,17 +16,20 @@ namespace OnlinePenalty
         public TargetMovement targetMovement;
         public ShootColorSelection shootColorSelection;
         public SingleAndMultiplayerOptions singleAndMultiplayerOptions;
-
+        PhotonView photonView;
 
         private void Awake()
         {
+            photonView = GetComponent<PhotonView>();
+
             targetMovement.Init(this);
             shootColorSelection.Init(this);
             singleAndMultiplayerOptions.Init(this);
 
+            singleAndMultiplayerOptions.IsConnected();
+
             if (Instance == null)
             {
-                //DontDestroyOnLoad(gameObject);
                 Instance = this;
             }
             else
@@ -39,7 +43,10 @@ namespace OnlinePenalty
             shootColorSelection.MovementArrow();
 
             singleAndMultiplayerOptions.StartCountdownTimer();
-            singleAndMultiplayerOptions.LoadScore();
+            //singleAndMultiplayerOptions.LoadScore();
+
+            singleAndMultiplayerOptions.SetInitialTurn();
+
         }
 
         private void OnApplicationQuit()
@@ -204,13 +211,23 @@ namespace OnlinePenalty
         {
 
             GameManager gameManager;
+            [Header("Countdown")]
             [SerializeField] TextMeshProUGUI countdownText;
             int countdown = 10; // Başlangıç değerini 10 olarak ayarlayın
             Coroutine countdownCoroutine;
-
+            [Header("Score")]
             [SerializeField] TextMeshProUGUI scoreText;
             int score = 0;
-
+            [Header("Multiplayer")]
+            [SerializeField] TextMeshProUGUI player1Text;
+            [SerializeField] TextMeshProUGUI player2Text;
+            int _player1Score = 0;
+            int _player2Score = 0;
+            bool _isMultiplayer = false;
+            bool _isPlayer1Turn = false;
+            bool _isPlayer2Turn = false;
+            bool _isPlayer1ButtonDone = false;
+            bool _isPlayer2ButtonDone = false;
             public void Init(GameManager gameManager)
             {
                 this.gameManager = gameManager;
@@ -235,7 +252,6 @@ namespace OnlinePenalty
                     gameManager.StopCoroutine(countdownCoroutine);
                 }
             }
-
             IEnumerator countdownTimer()
             {
                 while (countdown > 0)
@@ -245,38 +261,173 @@ namespace OnlinePenalty
                     countdown--;
                 }
                 countdownText.text = "0"; // Sayaç bittiğinde 0 olarak güncelle
-                //if (countdown == 0)
-                //{
-                //    gameManager.targetMovement.StopTargetMovement();
-                //    gameManager.shootColorSelection.StopArrowMovement();
-                //    UIManager.Instance.CloseShootButton();
-                //    UIManager.Instance.OpenFailCanvas();
-                //}
+                if (countdown == 0)
+                {
+                    gameManager.targetMovement.StopTargetMovement();
+                    gameManager.shootColorSelection.StopArrowMovement();
+                    UIManager.Instance.CloseShootButton();
+                    UIManager.Instance.OpenFailCanvas();
+                }
             }
 
             public void UpdateScore()
             {
-                score++;
-                scoreText.text = score.ToString();
-                SaveScore(); // Skoru kaydet
+                if (GetMultiplayerMode())
+                {
+                    if (_isPlayer1Turn)
+                    {
+                        _player1Score++;
+                    }
+                    else if (_isPlayer2Turn)
+                    {
+                        _player2Score++;
+                    }
+                    SaveScore();
+                }
+                else
+                {
+                    score++;
+                    scoreText.text = score.ToString();
+                    SaveScore(); // Skoru kaydet
+                }
+            }
+
+            [PunRPC]
+            void PunRPC_UpdateScore()
+            {
+                player1Text.text = _player1Score.ToString();
+                player2Text.text = _player2Score.ToString();
             }
 
             void SaveScore()
             {
-                PlayerPrefs.SetInt("Score", score); // Skoru kaydet
-                PlayerPrefs.Save();
+                if (GetMultiplayerMode())
+                {
+                    if (_isPlayer1Turn)
+                    {
+                        PlayerPrefs.SetInt("Player1Score", _player1Score);
+
+                    }
+                    else if (_isPlayer2Turn)
+                    {
+                        PlayerPrefs.SetInt("Player2Score", _player2Score);
+
+                    }
+                    PlayerPrefs.Save();
+                }
+                else
+                {
+                    PlayerPrefs.SetInt("Score", score); // Skoru kaydet
+                    PlayerPrefs.Save();
+                }
             }
 
             public void LoadScore()
             {
-                if (PlayerPrefs.HasKey("Score"))
+                if (PlayerPrefs.HasKey("Score") && !GetMultiplayerMode())
                 {
                     score = PlayerPrefs.GetInt("Score"); // Skoru yükle
                     scoreText.text = score.ToString();
                 }
+                else if (GetMultiplayerMode())
+                {
+                    _player1Score = PlayerPrefs.GetInt("Player1Score");
+                    _player2Score = PlayerPrefs.GetInt("Player2Score");
+                    gameManager.photonView.RPC("PunRPC_UpdateScore", RpcTarget.All);
+                }
             }
 
             #endregion
+            public void SetMultiplayerMode(bool value)
+            {
+                _isMultiplayer = value;
+            }
+            public bool GetMultiplayerMode()
+            {
+                return _isMultiplayer;
+            }
+            public void IsConnected()
+            {
+                if (PhotonNetwork.IsConnected)
+                {
+                    SetMultiplayerMode(true);
+                    UIManager.Instance.MultiplayerResultCanvas();
+                }
+            }
+
+            public bool IsPlayer1Turn()
+            {
+                return _isPlayer1Turn;
+            }
+            public bool IsPlayer2Turn()
+            {
+                return _isPlayer2Turn;
+            }
+
+
+            public void SetInitialTurn()
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    _isPlayer1Turn = true;
+                    SetTurn();
+                }
+                else
+                {
+                    _isPlayer2Turn = true;
+                    SetTurn();
+                }
+            }
+
+            public void SetTurn()
+            {
+                if (_isPlayer1Turn)
+                {
+                    UIManager.Instance.Player1Panels();
+                }
+                else if (_isPlayer2Turn)
+                {
+                    UIManager.Instance.Player2Panels();
+                }
+            }
+
+            public void IsPlayer1ButtonDone()
+            {
+                gameManager.photonView.RPC("PunRPC_IsPlayer1ButtonDone", RpcTarget.All);
+            }
+
+            [PunRPC]
+            void PunRPC_IsPlayer1ButtonDone()
+            {
+                _isPlayer1ButtonDone = true;
+                StartShootAndSaving();
+            }
+            public void IsPlayer2ButtonDone()
+            {
+                gameManager.photonView.RPC("PunRPC_IsPlayer2ButtonDone", RpcTarget.All);
+            }
+
+            [PunRPC]
+            void PunRPC_IsPlayer2ButtonDone()
+            {
+                _isPlayer2ButtonDone = true;
+                StartShootAndSaving();
+            }
+
+            public void StartShootAndSaving()
+            {
+                gameManager.photonView.RPC("PunRPC_StartShootAndSaving", RpcTarget.All);
+            }
+            [PunRPC]
+            void PunRPC_StartShootAndSaving()
+            {
+                if (_isPlayer1ButtonDone && _isPlayer2ButtonDone)
+                {
+                    SoccerPlayerController.Instance.StartShooting();
+                    GoalkeeperController.Instance.StartSaving();
+                }
+            }
+
         }
 
     }

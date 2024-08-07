@@ -6,12 +6,14 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-   public static UIManager Instance;
+    public static UIManager Instance;
     [SerializeField] GameObject goalCanvas;
     [SerializeField] GameObject failCanvas;
     [SerializeField] GameObject resultCanvas;
+    [SerializeField] GameObject resultMultiCanvas;
     [SerializeField] GameObject ShootControllCanvas;
     [SerializeField] GameObject GoalkeeperControllCanvas;
+    [SerializeField] GameObject targetObj;
     [SerializeField] Button shootButton;
     private void Awake()
     {
@@ -55,4 +57,24 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
+    #region Multiplayer
+    public void Player1Panels()
+    {
+        ShootControllCanvas.SetActive(true);
+        targetObj.SetActive(true);
+        GoalkeeperControllCanvas.SetActive(false);
+    }
+    public void Player2Panels()
+    {
+        GoalkeeperControllCanvas.SetActive(true);
+        ShootControllCanvas.SetActive(false);
+        targetObj.SetActive(false);
+    }
+
+    public void MultiplayerResultCanvas()
+    {
+        resultCanvas.SetActive(false);
+        resultMultiCanvas.SetActive(true);
+    }
+    #endregion
 }
