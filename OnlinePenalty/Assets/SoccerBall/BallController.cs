@@ -58,7 +58,7 @@ public class BallController : MonoBehaviour
         // Top hedef pozisyona ula�t�ktan sonra kuvvet uygulan�yor
         //rb.AddForce(finalForce, ForceMode.Impulse);
     }
-   
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("SoccerGoal"))
@@ -67,7 +67,7 @@ public class BallController : MonoBehaviour
             StopBallMovement();
 
             UIManager.Instance.OpenGoalCanvas();
-            GameManager.Instance.singleAndMultiplayerOptions.UpdateScore();
+            MultiplayerController.Instance.UpdateScore();
         }
     }
 

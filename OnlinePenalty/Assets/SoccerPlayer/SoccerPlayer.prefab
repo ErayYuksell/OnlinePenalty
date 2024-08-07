@@ -2655,6 +2655,8 @@ GameObject:
   - component: {fileID: 4617075716574445555}
   - component: {fileID: 8529219450593617897}
   - component: {fileID: 5915794107175177522}
+  - component: {fileID: 8728896274373415626}
+  - component: {fileID: 5675990344071118753}
   m_Layer: 0
   m_Name: SoccerPlayer
   m_TagString: Untagged
@@ -2718,7 +2720,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255f3204a9bc38e4ca11a1a62b850fa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ball: {fileID: 0}
+  goal: {fileID: 0}
   idle: {fileID: 7400000, guid: 49b2722668fe0104bb9b3d164875986a, type: 2}
+  penaltyKickAnim: {fileID: 7400000, guid: 2662641fedc651a43a17a61c9da40aa0, type: 2}
+--- !u!114 &8728896274373415626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8551346756889074286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 5675990344071118753}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &5675990344071118753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8551346756889074286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &8583842685270187872
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,10 +21,12 @@ public class SoccerPlayerController : MonoBehaviour
 
     Vector3 targetPosition;
     private bool animationFinished = false;
+    PhotonView photonView;
     private void Awake()
     {
         if (Instance == null)
         {
+            photonView = GetComponent<PhotonView>();
             Instance = this;
         }
         else
@@ -51,23 +53,25 @@ public class SoccerPlayerController : MonoBehaviour
 
         targetPosition = gameManager.targetMovement.StopTargetMovement();
 
-        if (!gameManager.singleAndMultiplayerOptions.GetMultiplayerMode())
+        if (!MultiplayerController.Instance.GetMultiplayerMode())
         {
             //Single icin zamani durdur 
-            gameManager.singleAndMultiplayerOptions.StopCountdownTimer();
+            MultiplayerController.Instance.StopCountdownTimer();
 
             //single icin atislari yap
             StartShooting();
         }
         else
         {
-            if (gameManager.singleAndMultiplayerOptions.IsPlayer1Turn())
+            if (MultiplayerController.Instance.IsPlayer1Turn())
             {
-                gameManager.singleAndMultiplayerOptions.IsPlayer1ButtonDone();
+                MultiplayerController.Instance.IsPlayer1ButtonDone();
+                Debug.Log("Player1 tap to button");
             }
-            else if (gameManager.singleAndMultiplayerOptions.IsPlayer2Turn())
+            else if (MultiplayerController.Instance.IsPlayer2Turn())
             {
-                gameManager.singleAndMultiplayerOptions.IsPlayer2ButtonDone();
+                MultiplayerController.Instance.IsPlayer2ButtonDone();
+                Debug.Log("Player2 tap to button");
             }
         }
     }
@@ -79,6 +83,16 @@ public class SoccerPlayerController : MonoBehaviour
         animationFinished = false;
     }
 
+    public void MultiplayerStartShooting() // multiplayerControllerda cagirmak icin bu fonksiyonu olusturdum 
+    {
+        photonView.RPC("PunRPC_MultiplayerStopShooting", RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void PunRPC_MultiplayerStopShooting()
+    {
+        StartShooting();
+    }
     public void ShootBall(Vector3 targetPos, float kickForce)
     {
         Vector3 direction = (targetPos - ball.position).normalized;
@@ -93,11 +107,24 @@ public class SoccerPlayerController : MonoBehaviour
         // Idle state'e ge�meden �nce pozisyonu ve rotasyonu sabitle
         animator.Play(idle.name);
     }
+
+    [PunRPC]
+    public void PunRPC_ShootBall(Vector3 targetPos, float kickForce)
+    {
+        ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
+    }
     // Animasyon Event tarafinda animasyonun ortasinda calistiriyorum 
     public void OnKick()
     {
-        ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
-        GoalkeeperController.Instance.StartSavingSingleMode();
+        if (!MultiplayerController.Instance.GetMultiplayerMode())
+        {
+            ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
+            GoalkeeperController.Instance.StartSavingSingleMode();
+        }
+        else if (MultiplayerController.Instance.GetMultiplayerMode())
+        {
+            photonView.RPC("PunRPC_ShootBall", RpcTarget.All, targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
+        }
     }
     // Animasyon Event tarafinda animasyonun sonunda calistiriyorum 
     public void OnAnimationComplete()
