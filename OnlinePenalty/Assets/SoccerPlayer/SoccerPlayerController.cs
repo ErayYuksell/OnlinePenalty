@@ -32,12 +32,11 @@ public class SoccerPlayerController : MonoBehaviour
     // Shoot butonuna tiklandiginda calisir 
     public void OnShootButtonPressed()
     {
-        // Renk bilgisi al ve i�leme devam et
+        
         string arrowColor = gameManager.shootColorSelection.GetArrowColor();
         Debug.Log("Arrow Color: " + arrowColor);
-        gameManager.shootColorSelection.StopArrowMovement(out Vector3 arrowPos);
+        gameManager.shootColorSelection.StopArrowMovement();
 
-        // targetImage hareketini durdur ve pozisyon bilgisini al
         targetPosition = gameManager.targetMovement.StopTargetMovement();
 
         //Single icin zamani durdur 
@@ -49,7 +48,6 @@ public class SoccerPlayerController : MonoBehaviour
 
     public void StartShooting()
     {
-        // Animasyonu oynat
         animator.Play(penaltyKickAnim.name);
         Debug.Log("Penalty Animasyonu calisti");
         animationFinished = false;

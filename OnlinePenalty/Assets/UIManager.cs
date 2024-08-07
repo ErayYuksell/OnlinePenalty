@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    #region End game panels
     public void OpenGoalCanvas()
     {
         StartCoroutine(IEOpenGoalCanvas());
@@ -34,9 +35,9 @@ public class UIManager : MonoBehaviour
     }
     IEnumerator IEOpenGoalCanvas()
     {
+        goalCanvas.SetActive(true);
         ShootControllCanvas.SetActive(false);
         resultCanvas.SetActive(false);
-        goalCanvas.SetActive(true);
         yield return new WaitForSeconds(1);
         SceneManager.LoadScene("Game");
     }
@@ -52,5 +53,6 @@ public class UIManager : MonoBehaviour
     {
         shootButton.interactable = false;
     }
+    #endregion
 
 }

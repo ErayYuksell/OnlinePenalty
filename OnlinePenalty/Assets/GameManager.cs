@@ -110,7 +110,7 @@ namespace OnlinePenalty
             [SerializeField] float barStart;
             [SerializeField] float barFinish;
             private Tween ArrowTween;
-
+            Vector3 arrowPos;
             [SerializeField] RectTransform failPoint;
             [SerializeField] RectTransform greenPoint_1;
             [SerializeField] RectTransform greenPoint_2;
@@ -128,11 +128,11 @@ namespace OnlinePenalty
                 Arrow.localPosition = startPos; // baska normal pos olarak almaya calistim alakasiz yerlerde git gel yapti o yuzden local aliyoruz
                 ArrowTween = Arrow.DOLocalMove(finishPos, 1f).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
             }
-
-            public void StopArrowMovement(out Vector3 arrowPos)
+            public Vector3 StopArrowMovement()
             {
                 ArrowTween?.Kill();
                 arrowPos = Arrow.localPosition; // O anki pozisyon bilgisini al
+                return arrowPos;
             }
 
             public string GetArrowColor()
@@ -245,13 +245,13 @@ namespace OnlinePenalty
                     countdown--;
                 }
                 countdownText.text = "0"; // Sayaç bittiğinde 0 olarak güncelle
-                if (countdown == 0)
-                {
-                    gameManager.targetMovement.StopTargetMovement();
-                    gameManager.shootColorSelection.StopArrowMovement(out Vector3 arrowPos);
-                    UIManager.Instance.CloseShootButton();
-                    UIManager.Instance.OpenFailCanvas();
-                }
+                //if (countdown == 0)
+                //{
+                //    gameManager.targetMovement.StopTargetMovement();
+                //    gameManager.shootColorSelection.StopArrowMovement();
+                //    UIManager.Instance.CloseShootButton();
+                //    UIManager.Instance.OpenFailCanvas();
+                //}
             }
 
             public void UpdateScore()
