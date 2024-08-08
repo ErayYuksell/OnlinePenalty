@@ -21,6 +21,7 @@ namespace OnlinePenalty
         [Header("Multiplayer")]
         [SerializeField] TextMeshProUGUI player1Text;
         [SerializeField] TextMeshProUGUI player2Text;
+        [SerializeField] TextMeshProUGUI multiplayerCountdownText;
         int _player1Score = 0;
         int _player2Score = 0;
         bool _isMultiplayer = false;
@@ -28,6 +29,7 @@ namespace OnlinePenalty
         bool _isPlayer2Turn = false;
         bool _isPlayer1ButtonDone = false;
         bool _isPlayer2ButtonDone = false;
+        bool whoTapToButton = false;
 
         GameManager gameManager;
         PhotonView photonView;
@@ -48,13 +50,31 @@ namespace OnlinePenalty
             gameManager = GameManager.Instance;
 
             IsConnected();
-            //StartCountdownTimer();
+            StartCountdownTimer();
             LoadScore();
             SetInitialTurn();
         }
 
         #region Countdown
         public void StartCountdownTimer()
+        {
+            if (GetMultiplayerMode() && PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("PunRPC_StartCountdownTimer", RpcTarget.All);
+            }
+            else if (!GetMultiplayerMode())
+            {
+                StartLocalCountdownTimer();
+            }
+        }
+
+        [PunRPC]
+        public void PunRPC_StartCountdownTimer()
+        {
+            StartLocalCountdownTimer();
+        }
+
+        private void StartLocalCountdownTimer()
         {
             if (countdownCoroutine != null)
             {
@@ -66,6 +86,24 @@ namespace OnlinePenalty
 
         public void StopCountdownTimer()
         {
+            if (GetMultiplayerMode() && PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("PunRPC_StopCountdownTimer", RpcTarget.All);
+            }
+            else if (!GetMultiplayerMode())
+            {
+                StopLocalCountdownTimer();
+            }
+        }
+
+        [PunRPC]
+        public void PunRPC_StopCountdownTimer()
+        {
+            StopLocalCountdownTimer();
+        }
+
+        private void StopLocalCountdownTimer()
+        {
             if (countdownCoroutine != null)
             {
                 StopCoroutine(countdownCoroutine);
@@ -76,11 +114,25 @@ namespace OnlinePenalty
         {
             while (countdown > 0)
             {
-                countdownText.text = countdown.ToString();
+                if (GetMultiplayerMode())
+                {
+                    multiplayerCountdownText.text = countdown.ToString();
+                }
+                else
+                {
+                    countdownText.text = countdown.ToString();
+                }
                 yield return new WaitForSeconds(1);
                 countdown--;
             }
-            countdownText.text = "0"; // Sayaç bittiðinde 0 olarak güncelle
+            if (GetMultiplayerMode())
+            {
+                multiplayerCountdownText.text = "0"; // Sayaç bittiðinde 0 olarak güncelle
+            }
+            else
+            {
+                countdownText.text = "0"; // Sayaç bittiðinde 0 olarak güncelle
+            }
             if (countdown == 0)
             {
                 gameManager.targetMovement.StopTargetMovement();
@@ -89,6 +141,7 @@ namespace OnlinePenalty
                 UIManager.Instance.OpenFailCanvas();
             }
         }
+
         #endregion
 
         #region Score
@@ -96,13 +149,15 @@ namespace OnlinePenalty
         {
             if (GetMultiplayerMode())
             {
-                if (_isPlayer1Turn)
+                if (_isPlayer1Turn && GetWhoTapToButton())
                 {
                     _player1Score++;
+                    Debug.Log("Player1Score: " + _player1Score);
                 }
-                else if (_isPlayer2Turn)
+                else if (_isPlayer2Turn && GetWhoTapToButton())
                 {
                     _player2Score++;
+                    Debug.Log("Player2Score: " + _player2Score);
                 }
                 SaveScore();
             }
@@ -114,6 +169,15 @@ namespace OnlinePenalty
             }
 
             SwitchTurn();
+        }
+
+        public void WhoTapToButton(bool value)
+        {
+            whoTapToButton = value;
+        }
+        public bool GetWhoTapToButton()
+        {
+            return whoTapToButton;
         }
 
         [PunRPC]
@@ -135,7 +199,6 @@ namespace OnlinePenalty
                 else if (_isPlayer2Turn)
                 {
                     PlayerPrefs.SetInt("Player2Score", _player2Score);
-
                 }
                 PlayerPrefs.Save();
             }
@@ -157,6 +220,7 @@ namespace OnlinePenalty
             {
                 _player1Score = PlayerPrefs.GetInt("Player1Score");
                 _player2Score = PlayerPrefs.GetInt("Player2Score");
+
                 photonView.RPC("PunRPC_UpdateScore", RpcTarget.All);
             }
         }
@@ -183,15 +247,6 @@ namespace OnlinePenalty
         #endregion
 
         #region PlayerTurn
-        public bool IsPlayer1Turn()
-        {
-            return _isPlayer1Turn;
-        }
-        public bool IsPlayer2Turn()
-        {
-            return _isPlayer2Turn;
-        }
-
         public void SetInitialTurn()
         {
             if (PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("IsPlayer1Turn"))
@@ -207,10 +262,21 @@ namespace OnlinePenalty
                 return;
             }
 
-            _isPlayer1Turn = PlayerPrefs.GetInt("IsPlayer1Turn") == 1 ? true : false;
-            _isPlayer2Turn = PlayerPrefs.GetInt("IsPlayer2Turn") == 1 ? true : false;
-            Debug.Log("IsPlayer1Turn" + PlayerPrefs.GetInt("IsPlayer1Turn"));
-            Debug.Log("IsPlayer2Turn" + PlayerPrefs.GetInt("IsPlayer2Turn"));
+            if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+            {
+                _isPlayer1Turn = PlayerPrefs.GetInt("IsPlayer1Turn") == 1 ? true : false;
+                _isPlayer2Turn = PlayerPrefs.GetInt("IsPlayer2Turn") == 1 ? true : false;
+                Debug.Log("IsPlayer1Turn: " + PlayerPrefs.GetInt("IsPlayer1Turn"));
+                Debug.Log("IsPlayer2Turn: " + PlayerPrefs.GetInt("IsPlayer2Turn"));
+            }
+            else if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
+            {
+                _isPlayer1Turn = PlayerPrefs.GetInt("IsPlayer1Turn_2") == 1 ? true : false;
+                _isPlayer2Turn = PlayerPrefs.GetInt("IsPlayer2Turn_2") == 1 ? true : false;
+                Debug.Log("IsPlayer1Turn_2: " + PlayerPrefs.GetInt("IsPlayer1Turn_2"));
+                Debug.Log("IsPlayer2Turn_2: " + PlayerPrefs.GetInt("IsPlayer2Turn_2"));
+            }
+
             SetTurn();
         }
 
@@ -231,11 +297,29 @@ namespace OnlinePenalty
             _isPlayer1Turn = !_isPlayer1Turn;
             _isPlayer2Turn = !_isPlayer2Turn;
 
-            PlayerPrefs.SetInt("IsPlayer1Turn", _isPlayer1Turn ? 1 : 0);
-            PlayerPrefs.SetInt("IsPlayer2Turn", _isPlayer2Turn ? 1 : 0);
+            if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+            {
+                PlayerPrefs.SetInt("IsPlayer1Turn", _isPlayer1Turn ? 1 : 0);
+                PlayerPrefs.SetInt("IsPlayer2Turn", _isPlayer2Turn ? 1 : 0);
+                Debug.Log("Player1Turn: " + _isPlayer1Turn);
+                Debug.Log("Player2Turn: " + _isPlayer2Turn);
+            }
+            else if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
+            {
+                PlayerPrefs.SetInt("IsPlayer1Turn_2", _isPlayer1Turn ? 1 : 0);
+                PlayerPrefs.SetInt("IsPlayer2Turn_2", _isPlayer2Turn ? 1 : 0);
+                Debug.Log("Player1Turn_2: " + _isPlayer1Turn);
+                Debug.Log("Player2Turn_2: " + _isPlayer2Turn);
+            }
+        }
 
-            Debug.Log("Player1Turn: " + _isPlayer1Turn);
-            Debug.Log("Player2Turn: " + _isPlayer2Turn);
+        public bool IsPlayer1Turn()
+        {
+            return _isPlayer1Turn;
+        }
+        public bool IsPlayer2Turn()
+        {
+            return _isPlayer2Turn;
         }
         #endregion
 
@@ -276,6 +360,7 @@ namespace OnlinePenalty
         {
             if (_isPlayer1ButtonDone && _isPlayer2ButtonDone)
             {
+                StopCountdownTimer();
                 SoccerPlayerController.Instance.MultiplayerStartShooting();
                 GoalkeeperController.Instance.StartSaving();
                 Debug.Log("Playing shoot and saving");

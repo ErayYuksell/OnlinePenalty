@@ -65,20 +65,27 @@ public class SoccerPlayerController : MonoBehaviour
         }
         else
         {
+            Debug.Log("ButtonPlayer1: " + MultiplayerController.Instance.IsPlayer1Turn());
+            Debug.Log("ButtonPlayer2: " + MultiplayerController.Instance.IsPlayer2Turn());
+
             if (MultiplayerController.Instance.IsPlayer1Turn())
             {
                 MultiplayerController.Instance.IsPlayer1ButtonDone();
+                MultiplayerController.Instance.WhoTapToButton(true);
                 Debug.Log("Player1 tap to button");
+                Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
             }
             else if (MultiplayerController.Instance.IsPlayer2Turn())
             {
                 MultiplayerController.Instance.IsPlayer2ButtonDone();
+                MultiplayerController.Instance.WhoTapToButton(true);
                 Debug.Log("Player2 tap to button");
+                Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
             }
         }
     }
 
-    [PunRPC] 
+    [PunRPC]
     void PunRPC_GetTargetPos()
     {
         targetPosition = gameManager.targetMovement.StopTargetMovement();
@@ -93,11 +100,11 @@ public class SoccerPlayerController : MonoBehaviour
 
     public void MultiplayerStartShooting() // multiplayerControllerda cagirmak icin bu fonksiyonu olusturdum 
     {
-        photonView.RPC("PunRPC_MultiplayerStopShooting", RpcTarget.All);
+        photonView.RPC("PunRPC_MultiplayerShooting", RpcTarget.All);
     }
 
     [PunRPC]
-    public void PunRPC_MultiplayerStopShooting()
+    public void PunRPC_MultiplayerShooting()
     {
         StartShooting();
     }
@@ -115,12 +122,6 @@ public class SoccerPlayerController : MonoBehaviour
         // Idle state'e ge�meden �nce pozisyonu ve rotasyonu sabitle
         animator.Play(idle.name);
     }
-
-    [PunRPC]
-    public void PunRPC_ShootBall(Vector3 targetPos, float kickForce)
-    {
-        ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
-    }
     // Animasyon Event tarafinda animasyonun ortasinda calistiriyorum 
     public void OnKick()
     {
@@ -134,6 +135,13 @@ public class SoccerPlayerController : MonoBehaviour
             photonView.RPC("PunRPC_ShootBall", RpcTarget.All, targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
         }
     }
+
+    [PunRPC]
+    public void PunRPC_ShootBall(Vector3 targetPos, float kickForce)
+    {
+        ShootBall(targetPosition, kickForce);
+    }
+    
     // Animasyon Event tarafinda animasyonun sonunda calistiriyorum 
     public void OnAnimationComplete()
     {

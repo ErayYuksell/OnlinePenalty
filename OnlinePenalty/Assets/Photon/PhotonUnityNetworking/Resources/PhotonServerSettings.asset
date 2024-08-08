@@ -47,6 +47,11 @@ MonoBehaviour:
   - PunRPC_IsPlayer2ButtonDone
   - PunRPC_StartShootAndSaving
   - PunRPC_MultiplayerStopShooting
+  - PunRPC_GetTargetPos
+  - PunRPC_UpdateYellowAreaRotation
+  - PunRPC_SetTurn
+  - PunRPC_StartCountdownTimer
+  - PunRPC_StopCountdownTimer
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

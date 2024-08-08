@@ -1244,6 +1244,7 @@ MonoBehaviour:
   scoreText: {fileID: 1022308936}
   player1Text: {fileID: 1607562723}
   player2Text: {fileID: 1934935756}
+  multiplayerCountdownText: {fileID: 884631235}
 --- !u!4 &546297798
 Transform:
   m_ObjectHideFlags: 0
