@@ -26,10 +26,17 @@ public class BallController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
+    public void KickBall(Vector3 direction, float force)
+    {
+        rb.AddForce(direction * force, ForceMode.VelocityChange);
+    }
+
+
     public void KickBall(Vector3 targetPosition, float height, float duration, Vector3 finalForce)
     {
         StartCoroutine(SmoothKickBall(targetPosition, height, duration, finalForce));
     }
+
     public void StopBallMovement()
     {
         StopAllCoroutines();
@@ -65,7 +72,7 @@ public class BallController : MonoBehaviour
         {
             ballInside = true;
             Debug.Log("Top Aglarda");
-            StopBallMovement();
+            //StopBallMovement();
 
             MultiplayerController.Instance.UpdateScore();
             UIManager.Instance.OpenGoalCanvas();

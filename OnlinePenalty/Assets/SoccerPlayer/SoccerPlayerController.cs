@@ -46,12 +46,10 @@ public class SoccerPlayerController : MonoBehaviour
     // Shoot butonuna tiklandiginda calisir 
     public void OnShootButtonPressed()
     {
-
         string arrowColor = gameManager.shootColorSelection.GetArrowColor();
         Debug.Log("Arrow Color: " + arrowColor);
         gameManager.shootColorSelection.StopArrowMovement();
 
-        //targetPosition = gameManager.targetMovement.StopTargetMovement();
         photonView.RPC("PunRPC_GetTargetPos", RpcTarget.All);
 
         if (!MultiplayerController.Instance.GetMultiplayerMode())
@@ -73,16 +71,17 @@ public class SoccerPlayerController : MonoBehaviour
                 MultiplayerController.Instance.IsPlayer1ButtonDone();
                 MultiplayerController.Instance.WhoTapToButton(true);
                 Debug.Log("Player1 tap to button");
-                Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
+                //Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
             }
             else if (MultiplayerController.Instance.IsPlayer2Turn())
             {
                 MultiplayerController.Instance.IsPlayer2ButtonDone();
                 MultiplayerController.Instance.WhoTapToButton(true);
                 Debug.Log("Player2 tap to button");
-                Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
+                //Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
             }
         }
+
     }
 
     [PunRPC]
@@ -100,7 +99,10 @@ public class SoccerPlayerController : MonoBehaviour
 
     public void MultiplayerStartShooting() // multiplayerControllerda cagirmak icin bu fonksiyonu olusturdum 
     {
-        photonView.RPC("PunRPC_MultiplayerShooting", RpcTarget.All);
+        if (photonView.IsMine)
+        {
+            photonView.RPC("PunRPC_MultiplayerShooting", RpcTarget.All);
+        }
     }
 
     [PunRPC]
@@ -108,44 +110,55 @@ public class SoccerPlayerController : MonoBehaviour
     {
         StartShooting();
     }
+
     public void ShootBall(Vector3 targetPos, float kickForce)
     {
         Vector3 direction = (targetPos - ball.position).normalized;
         Vector3 finalForce = direction * kickForce; // Final kuvveti belirleniyor
-        ballController.KickBall(targetPos, gameManager.shootColorSelection.BallMovementHightByColor(), 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
+        //ballController.KickBall(targetPos, gameManager.shootColorSelection.BallMovementHightByColor(), 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
+        ballController.KickBall(direction, gameManager.shootColorSelection.BallMovementForceByColor());
+
         Debug.Log("Top hareketi basladi");
 
+        GoalkeeperController.Instance.StartSaving();
 
-        // Animasyon tamamland���nda yap�lacak i�lemler
+        // Animasyon tamamlandığında yapılacak işlemler
         animationFinished = true;
 
-        // Idle state'e ge�meden �nce pozisyonu ve rotasyonu sabitle
+        // Idle state'e geçmeden önce pozisyonu ve rotasyonu sabitle
         animator.Play(idle.name);
-    }
-    // Animasyon Event tarafinda animasyonun ortasinda calistiriyorum 
-    public void OnKick()
-    {
-        if (!MultiplayerController.Instance.GetMultiplayerMode())
-        {
-            ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
-            GoalkeeperController.Instance.StartSavingSingleMode();
-        }
-        else if (MultiplayerController.Instance.GetMultiplayerMode())
-        {
-            photonView.RPC("PunRPC_ShootBall", RpcTarget.All, targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
-        }
     }
 
     [PunRPC]
     public void PunRPC_ShootBall(Vector3 targetPos, float kickForce)
     {
-        ShootBall(targetPosition, kickForce);
+        ShootBall(targetPos, kickForce);
     }
-    
+
+    // Animasyon Event tarafinda animasyonun ortasinda calistiriyorum 
+    public void OnKick()
+    {
+        if (photonView.IsMine)
+        {
+            if (!MultiplayerController.Instance.GetMultiplayerMode())
+            {
+                ShootBall(targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
+                GoalkeeperController.Instance.StartSavingSingleMode();
+            }
+            else if (MultiplayerController.Instance.GetMultiplayerMode())
+            {
+                photonView.RPC("PunRPC_ShootBall", RpcTarget.All, targetPosition, gameManager.shootColorSelection.BallMovementForceByColor());
+            }
+        }
+    }
+
     // Animasyon Event tarafinda animasyonun sonunda calistiriyorum 
     public void OnAnimationComplete()
     {
-        animationFinished = true;
-        animator.Play(idle.name);
+        if (photonView.IsMine)
+        {
+            animationFinished = true;
+            animator.Play(idle.name);
+        }
     }
 }

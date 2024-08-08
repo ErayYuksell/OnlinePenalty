@@ -362,7 +362,6 @@ namespace OnlinePenalty
             {
                 StopCountdownTimer();
                 SoccerPlayerController.Instance.MultiplayerStartShooting();
-                GoalkeeperController.Instance.StartSaving();
                 Debug.Log("Playing shoot and saving");
             }
         }

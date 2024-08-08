@@ -52,6 +52,7 @@ MonoBehaviour:
   - PunRPC_SetTurn
   - PunRPC_StartCountdownTimer
   - PunRPC_StopCountdownTimer
+  - PunRPC_MultiplayerShooting
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

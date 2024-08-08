@@ -37,18 +37,21 @@ public class UIManager : MonoBehaviour
     }
     IEnumerator IEOpenGoalCanvas()
     {
-        goalCanvas.SetActive(true);
+       
         ShootControllCanvas.SetActive(false);
         resultCanvas.SetActive(false);
         yield return new WaitForSeconds(1);
+        goalCanvas.SetActive(true);
+        yield return new WaitForSeconds(2);
         SceneManager.LoadScene("Game");
     }
     IEnumerator IEOpenFailCanvas()
     {
         ShootControllCanvas.SetActive(false);
         resultCanvas.SetActive(false);
-        failCanvas.SetActive(true);
         yield return new WaitForSeconds(1);
+        failCanvas.SetActive(true);
+        yield return new WaitForSeconds(2);
         SceneManager.LoadScene("Game");
     }
     public void CloseShootButton()

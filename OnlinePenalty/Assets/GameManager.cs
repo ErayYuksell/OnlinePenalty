@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR;
 
 
 namespace OnlinePenalty
@@ -21,7 +22,7 @@ namespace OnlinePenalty
         {
             targetMovement.Init(this);
             shootColorSelection.Init(this);
-           
+
 
             if (Instance == null)
             {
@@ -36,7 +37,6 @@ namespace OnlinePenalty
         {
             targetMovement.ChooseRandomPoint();
             shootColorSelection.MovementArrow();
-
         }
 
 
@@ -99,19 +99,27 @@ namespace OnlinePenalty
         {
             GameManager gameManager;
 
-            [SerializeField] RectTransform Arrow;
             [SerializeField] float barStart;
             [SerializeField] float barFinish;
             private Tween ArrowTween;
             Vector3 arrowPos;
+           
+            [SerializeField] RectTransform Arrow;
             [SerializeField] RectTransform failPoint;
             [SerializeField] RectTransform greenPoint_1;
             [SerializeField] RectTransform greenPoint_2;
+            private Dictionary<string, (RectTransform rect, float force)> zones;
 
-            float force;
             public void Init(GameManager gameManager)
             {
                 this.gameManager = gameManager;
+
+                zones = new Dictionary<string, (RectTransform, float)>
+               {
+                 { "Fail", (failPoint, 50f) },
+                 { "Green_1", (greenPoint_1, 20f) },
+                 { "Green_2", (greenPoint_2, 20f) }
+               };
             }
 
             public void MovementArrow()
@@ -132,11 +140,8 @@ namespace OnlinePenalty
             {
                 Vector3 arrowPos = Arrow.position;
 
-                if (IsWithinBounds(arrowPos, failPoint))
-                {
-                    return "Fail";
-                }
-                else if (IsWithinBounds(arrowPos, greenPoint_1))
+                // Önce yeşil barları kontrol et
+                if (IsWithinBounds(arrowPos, greenPoint_1))
                 {
                     return "Green_1";
                 }
@@ -145,49 +150,38 @@ namespace OnlinePenalty
                     return "Green_2";
                 }
 
+                // Sonra mavi barları kontrol et
+                foreach (var zone in zones)
+                {
+                    if (IsWithinBounds(arrowPos, zone.Value.rect))
+                    {
+                        return zone.Key;
+                    }
+                }
+
                 return "Unknown";
             }
 
             public float BallMovementForceByColor()
             {
-                switch (GetArrowColor())
+                string arrowColor = GetArrowColor();
+
+                if (zones.TryGetValue(arrowColor, out var zone))
                 {
-                    default: return 2f;
-                    case "Fail":
-                        force = 2;
-                        break;
-                    case "Green_1":
-                        force = 3;
-                        break;
-                    case "Green_2":
-                        force = 3;
-                        break;
+                    return zone.force;
                 }
-                return force;
-            }
-            public float BallMovementHightByColor()
-            {
-                switch (GetArrowColor())
-                {
-                    default: return 1f;
-                    case "Fail":
-                        force = 1;
-                        break;
-                    case "Green_1":
-                        force = 2;
-                        break;
-                    case "Green_2":
-                        force = 2;
-                        break;
-                }
-                return force;
+
+                return 50f; // Default force
             }
 
             private bool IsWithinBounds(Vector3 arrowPos, RectTransform rect)
             {
                 Vector3[] corners = new Vector3[4];
-                rect.GetWorldCorners(corners); // bu fonksiyon ile rect objesinin 4 kenarininin tam olarak konumunu alabiliyorsun 
-                return arrowPos.x >= corners[0].x && arrowPos.x <= corners[2].x;
+                rect.GetWorldCorners(corners); // bu fonksiyon ile rect objesinin 4 kenarininin tam olarak konumunu alabiliyorsun
+
+                // Okun merkezinin alanın içinde olup olmadığını kontrol et
+                return arrowPos.x >= corners[0].x && arrowPos.x <= corners[2].x &&
+                       arrowPos.y >= corners[0].y && arrowPos.y <= corners[2].y;
             }
         }
 
