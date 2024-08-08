@@ -48,7 +48,7 @@ namespace OnlinePenalty
             gameManager = GameManager.Instance;
 
             IsConnected();
-            StartCountdownTimer();
+            //StartCountdownTimer();
             LoadScore();
             SetInitialTurn();
         }
@@ -112,6 +112,8 @@ namespace OnlinePenalty
                 scoreText.text = score.ToString();
                 SaveScore(); // Skoru kaydet
             }
+
+            SwitchTurn();
         }
 
         [PunRPC]
@@ -192,16 +194,24 @@ namespace OnlinePenalty
 
         public void SetInitialTurn()
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("IsPlayer1Turn"))
             {
                 _isPlayer1Turn = true;
                 SetTurn();
+                return;
             }
-            else
+            else if (!PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("IsPlayer2Turn"))
             {
                 _isPlayer2Turn = true;
                 SetTurn();
+                return;
             }
+
+            _isPlayer1Turn = PlayerPrefs.GetInt("IsPlayer1Turn") == 1 ? true : false;
+            _isPlayer2Turn = PlayerPrefs.GetInt("IsPlayer2Turn") == 1 ? true : false;
+            Debug.Log("IsPlayer1Turn" + PlayerPrefs.GetInt("IsPlayer1Turn"));
+            Debug.Log("IsPlayer2Turn" + PlayerPrefs.GetInt("IsPlayer2Turn"));
+            SetTurn();
         }
 
         public void SetTurn()
@@ -221,7 +231,11 @@ namespace OnlinePenalty
             _isPlayer1Turn = !_isPlayer1Turn;
             _isPlayer2Turn = !_isPlayer2Turn;
 
-            SetTurn();
+            PlayerPrefs.SetInt("IsPlayer1Turn", _isPlayer1Turn ? 1 : 0);
+            PlayerPrefs.SetInt("IsPlayer2Turn", _isPlayer2Turn ? 1 : 0);
+
+            Debug.Log("Player1Turn: " + _isPlayer1Turn);
+            Debug.Log("Player2Turn: " + _isPlayer2Turn);
         }
         #endregion
 
@@ -271,7 +285,7 @@ namespace OnlinePenalty
 
         private void OnApplicationQuit()
         {
-            PlayerPrefs.DeleteKey("Score"); // Oyunu kapatýrken skoru sýfýrla
+            PlayerPrefs.DeleteAll();
         }
     }
 }

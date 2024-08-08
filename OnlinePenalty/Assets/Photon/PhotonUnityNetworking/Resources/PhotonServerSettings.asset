@@ -46,6 +46,7 @@ MonoBehaviour:
   - PunRPC_IsPlayer1ButtonDone
   - PunRPC_IsPlayer2ButtonDone
   - PunRPC_StartShootAndSaving
+  - PunRPC_MultiplayerStopShooting
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

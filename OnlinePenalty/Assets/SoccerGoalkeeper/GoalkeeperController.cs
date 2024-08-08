@@ -20,7 +20,7 @@ namespace OnlinePenalty
         [SerializeField] Transform yellowAreaParentTransform; // Sar� alan� temsil eden transform
 
 
-        //PhotonView photonView;
+        PhotonView photonView;
 
 
         private void Awake()
@@ -28,6 +28,7 @@ namespace OnlinePenalty
             if (Instance == null)
             {
                 Instance = this;
+                photonView = GetComponent<PhotonView>();
             }
             else
             {
@@ -65,14 +66,14 @@ namespace OnlinePenalty
         {
             float rotationAngle = Mathf.Lerp(-60f, 60f, -rotationFactor * 0.5f + 0.5f);
             yellowAreaParentTransform.localEulerAngles = new Vector3(0, 0, rotationAngle);
-            //photonView.RPC("PunRPC_UpdateYellowAreaRotation", RpcTarget.All, yellowAreaParentTransform.localEulerAngles.z);
+            photonView.RPC("PunRPC_UpdateYellowAreaRotation", RpcTarget.All, yellowAreaParentTransform.localEulerAngles.z);
         }
 
-        //[PunRPC]
-        //public void PunRPC_UpdateYellowAreaRotation(float rotationZ)
-        //{
-        //    yellowAreaParentTransform.localEulerAngles = new Vector3(0, 0, rotationZ);
-        //}
+        [PunRPC]
+        public void PunRPC_UpdateYellowAreaRotation(float rotationZ)
+        {
+            yellowAreaParentTransform.localEulerAngles = new Vector3(0, 0, rotationZ);
+        }
         public void StartSavingSingleMode()
         {
             animator.Play(animations[Random.Range(0, animations.Count)].name);

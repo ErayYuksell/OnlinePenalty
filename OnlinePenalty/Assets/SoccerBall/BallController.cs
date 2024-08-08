@@ -8,7 +8,7 @@ public class BallController : MonoBehaviour
 {
     public static BallController Instance;
     private Rigidbody rb;
-
+    bool ballInside = false;
     private void Awake()
     {
         if (Instance == null)
@@ -61,13 +61,14 @@ public class BallController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("SoccerGoal"))
+        if (other.CompareTag("SoccerGoal") && !ballInside)
         {
+            ballInside = true;
             Debug.Log("Top Aglarda");
             StopBallMovement();
 
-            UIManager.Instance.OpenGoalCanvas();
             MultiplayerController.Instance.UpdateScore();
+            UIManager.Instance.OpenGoalCanvas();
         }
     }
 

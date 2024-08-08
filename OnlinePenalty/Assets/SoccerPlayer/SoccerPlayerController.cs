@@ -51,10 +51,12 @@ public class SoccerPlayerController : MonoBehaviour
         Debug.Log("Arrow Color: " + arrowColor);
         gameManager.shootColorSelection.StopArrowMovement();
 
-        targetPosition = gameManager.targetMovement.StopTargetMovement();
+        //targetPosition = gameManager.targetMovement.StopTargetMovement();
+        photonView.RPC("PunRPC_GetTargetPos", RpcTarget.All);
 
         if (!MultiplayerController.Instance.GetMultiplayerMode())
         {
+            Debug.Log("Single Mode");
             //Single icin zamani durdur 
             MultiplayerController.Instance.StopCountdownTimer();
 
@@ -74,6 +76,12 @@ public class SoccerPlayerController : MonoBehaviour
                 Debug.Log("Player2 tap to button");
             }
         }
+    }
+
+    [PunRPC] 
+    void PunRPC_GetTargetPos()
+    {
+        targetPosition = gameManager.targetMovement.StopTargetMovement();
     }
 
     public void StartShooting()
