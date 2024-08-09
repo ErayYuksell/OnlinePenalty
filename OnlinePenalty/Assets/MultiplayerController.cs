@@ -171,7 +171,7 @@ namespace OnlinePenalty
             SwitchTurn();
         }
 
-        public void WhoTapToButton(bool value)
+        public void WhoTapToButton(bool value) // Gerekdiz olabilir bir ara bak 
         {
             whoTapToButton = value;
         }
@@ -324,6 +324,7 @@ namespace OnlinePenalty
         #endregion
 
         #region Player1 and Player2 Tap to button
+      
         public void IsPlayer1ButtonDone()
         {
             _isPlayer1ButtonDone = true;
@@ -336,7 +337,6 @@ namespace OnlinePenalty
             _isPlayer1ButtonDone = true;
             StartShootAndSaving();
         }
-
         public void IsPlayer2ButtonDone()
         {
             _isPlayer2ButtonDone = true;

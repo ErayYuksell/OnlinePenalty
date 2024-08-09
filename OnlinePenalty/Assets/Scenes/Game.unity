@@ -5284,6 +5284,10 @@ PrefabInstance:
       propertyPath: goal
       value: 
       objectReference: {fileID: 1893250056}
+    - target: {fileID: 8529219450593617897, guid: bc01dff5d98e3a2469c28e55e99252da, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8551346756889074286, guid: bc01dff5d98e3a2469c28e55e99252da, type: 3}
       propertyPath: m_Name
       value: SoccerPlayer

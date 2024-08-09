@@ -1,3 +1,5 @@
+using OnlinePenalty;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,7 +39,7 @@ public class UIManager : MonoBehaviour
     }
     IEnumerator IEOpenGoalCanvas()
     {
-       
+
         ShootControllCanvas.SetActive(false);
         resultCanvas.SetActive(false);
         yield return new WaitForSeconds(1);
@@ -78,6 +80,36 @@ public class UIManager : MonoBehaviour
     {
         resultCanvas.SetActive(false);
         resultMultiCanvas.SetActive(true);
+    }
+
+    public void GoalAndFailCanvasSwitchTurn()
+    {
+        if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
+        {
+            if (MultiplayerController.Instance.IsPlayer1Turn())
+            {
+                OpenGoalCanvas();
+                Debug.Log("Player1GoalCanvas");
+            }
+            else
+            {
+                OpenFailCanvas();
+                Debug.Log("Player1FailCanvas");
+            }
+        }
+        if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
+        {
+            if (MultiplayerController.Instance.IsPlayer2Turn())
+            {
+                OpenFailCanvas();
+                Debug.Log("Player2FailCanvas");
+            }
+            else
+            {
+                OpenGoalCanvas();
+                Debug.Log("Player2GoalCanvas");
+            }
+        }
     }
     #endregion
 }

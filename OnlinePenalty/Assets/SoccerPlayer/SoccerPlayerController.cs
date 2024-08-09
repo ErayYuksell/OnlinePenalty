@@ -63,22 +63,17 @@ public class SoccerPlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("ButtonPlayer1: " + MultiplayerController.Instance.IsPlayer1Turn());
-            Debug.Log("ButtonPlayer2: " + MultiplayerController.Instance.IsPlayer2Turn());
-
             if (MultiplayerController.Instance.IsPlayer1Turn())
             {
                 MultiplayerController.Instance.IsPlayer1ButtonDone();
                 MultiplayerController.Instance.WhoTapToButton(true);
                 Debug.Log("Player1 tap to button");
-                //Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
             }
             else if (MultiplayerController.Instance.IsPlayer2Turn())
             {
                 MultiplayerController.Instance.IsPlayer2ButtonDone();
                 MultiplayerController.Instance.WhoTapToButton(true);
                 Debug.Log("Player2 tap to button");
-                //Debug.Log(MultiplayerController.Instance.GetWhoTapToButton());
             }
         }
 
@@ -99,7 +94,7 @@ public class SoccerPlayerController : MonoBehaviour
 
     public void MultiplayerStartShooting() // multiplayerControllerda cagirmak icin bu fonksiyonu olusturdum 
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine) // sadece yerel oyuncu tarafindan calistirilir ve diger oyunculara goruntusu gosterilir 
         {
             photonView.RPC("PunRPC_MultiplayerShooting", RpcTarget.All);
         }

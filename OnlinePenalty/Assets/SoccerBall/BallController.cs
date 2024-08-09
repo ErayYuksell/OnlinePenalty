@@ -1,4 +1,5 @@
 ﻿using OnlinePenalty;
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,8 +75,9 @@ public class BallController : MonoBehaviour
             Debug.Log("Top Aglarda");
             //StopBallMovement();
 
+            UIManager.Instance.GoalAndFailCanvasSwitchTurn();
+
             MultiplayerController.Instance.UpdateScore();
-            UIManager.Instance.OpenGoalCanvas();
         }
     }
 

@@ -58,7 +58,19 @@ namespace OnlinePenalty
             goalkeeperAreaPanel.SetActive(false); // kaleci atlamadan paneli kapa 
             isDrag = false;
             buttonRectTransform.gameObject.GetComponent<Button>().interactable = false;
-            MultiplayerController.Instance.IsPlayer2ButtonDone();
+
+            if (MultiplayerController.Instance.IsPlayer1Turn())
+            {
+                MultiplayerController.Instance.IsPlayer1ButtonDone();
+                MultiplayerController.Instance.WhoTapToButton(true);
+                Debug.Log("Goalkeeper Player1 tap to button");
+            }
+            else if (MultiplayerController.Instance.IsPlayer2Turn())
+            {
+                MultiplayerController.Instance.IsPlayer2ButtonDone();
+                MultiplayerController.Instance.WhoTapToButton(true);
+                Debug.Log("Goalkeeper Player2 tap to button");
+            }
         }
     }
 
