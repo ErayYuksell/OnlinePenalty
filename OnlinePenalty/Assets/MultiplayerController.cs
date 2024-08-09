@@ -3,6 +3,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace OnlinePenalty
@@ -25,11 +26,13 @@ namespace OnlinePenalty
         int _player1Score = 0;
         int _player2Score = 0;
         bool _isMultiplayer = false;
-        bool _isPlayer1Turn = false;
-        bool _isPlayer2Turn = false;
-        bool _isPlayer1ButtonDone = false;
-        bool _isPlayer2ButtonDone = false;
-        bool whoTapToButton = false;
+        bool _isPlayerShooting = false;
+        bool _isPlayerControllingGoalkeeper = false;
+        bool _isPlayerShootingButtonDone = false;
+        bool _isPlayerControllingGoalkeeperButtonDone = false;
+
+     
+
 
         GameManager gameManager;
         PhotonView photonView;
@@ -149,16 +152,17 @@ namespace OnlinePenalty
         {
             if (GetMultiplayerMode())
             {
-                if (_isPlayer1Turn && GetWhoTapToButton())
+                if (PhotonNetwork.LocalPlayer.ActorNumber == 1 && _isPlayerShooting)
                 {
                     _player1Score++;
                     Debug.Log("Player1Score: " + _player1Score);
                 }
-                else if (_isPlayer2Turn && GetWhoTapToButton())
+                else if (PhotonNetwork.LocalPlayer.ActorNumber == 2 && _isPlayerShooting)
                 {
                     _player2Score++;
                     Debug.Log("Player2Score: " + _player2Score);
                 }
+
                 SaveScore();
             }
             else
@@ -169,15 +173,6 @@ namespace OnlinePenalty
             }
 
             SwitchTurn();
-        }
-
-        public void WhoTapToButton(bool value) // Gerekdiz olabilir bir ara bak 
-        {
-            whoTapToButton = value;
-        }
-        public bool GetWhoTapToButton()
-        {
-            return whoTapToButton;
         }
 
         [PunRPC]
@@ -191,12 +186,12 @@ namespace OnlinePenalty
         {
             if (GetMultiplayerMode())
             {
-                if (_isPlayer1Turn)
+                if (PhotonNetwork.LocalPlayer.ActorNumber == 1 && _isPlayerShooting)
                 {
                     PlayerPrefs.SetInt("Player1Score", _player1Score);
 
                 }
-                else if (_isPlayer2Turn)
+                else if (PhotonNetwork.LocalPlayer.ActorNumber == 2 && _isPlayerShooting)
                 {
                     PlayerPrefs.SetInt("Player2Score", _player2Score);
                 }
@@ -249,32 +244,32 @@ namespace OnlinePenalty
         #region PlayerTurn
         public void SetInitialTurn()
         {
-            if (PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("IsPlayer1Turn"))
+            if (PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("_isPlayerShooting"))
             {
-                _isPlayer1Turn = true;
+                _isPlayerShooting = true;
                 SetTurn();
                 return;
             }
-            else if (!PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("IsPlayer2Turn"))
+            else if (!PhotonNetwork.IsMasterClient && !PlayerPrefs.HasKey("_isPlayerControllingGoalkeeper"))
             {
-                _isPlayer2Turn = true;
+                _isPlayerControllingGoalkeeper = true;
                 SetTurn();
                 return;
             }
 
             if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
             {
-                _isPlayer1Turn = PlayerPrefs.GetInt("IsPlayer1Turn") == 1 ? true : false;
-                _isPlayer2Turn = PlayerPrefs.GetInt("IsPlayer2Turn") == 1 ? true : false;
-                Debug.Log("IsPlayer1Turn: " + PlayerPrefs.GetInt("IsPlayer1Turn"));
-                Debug.Log("IsPlayer2Turn: " + PlayerPrefs.GetInt("IsPlayer2Turn"));
+                _isPlayerShooting = PlayerPrefs.GetInt("_isPlayerShooting") == 1 ? true : false;
+                _isPlayerControllingGoalkeeper = PlayerPrefs.GetInt("_isPlayerControllingGoalkeeper") == 1 ? true : false;
+                //Debug.Log("IsPlayer1Turn: " + PlayerPrefs.GetInt("IsPlayer1Turn"));
+                //Debug.Log("IsPlayer2Turn: " + PlayerPrefs.GetInt("IsPlayer2Turn"));
             }
             else if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
             {
-                _isPlayer1Turn = PlayerPrefs.GetInt("IsPlayer1Turn_2") == 1 ? true : false;
-                _isPlayer2Turn = PlayerPrefs.GetInt("IsPlayer2Turn_2") == 1 ? true : false;
-                Debug.Log("IsPlayer1Turn_2: " + PlayerPrefs.GetInt("IsPlayer1Turn_2"));
-                Debug.Log("IsPlayer2Turn_2: " + PlayerPrefs.GetInt("IsPlayer2Turn_2"));
+                _isPlayerShooting = PlayerPrefs.GetInt("_isPlayerShooting_2") == 1 ? true : false;
+                _isPlayerControllingGoalkeeper = PlayerPrefs.GetInt("_isPlayerControllingGoalkeeper_2") == 1 ? true : false;
+                //Debug.Log("IsPlayer1Turn_2: " + PlayerPrefs.GetInt("IsPlayer1Turn_2"));
+                //Debug.Log("IsPlayer2Turn_2: " + PlayerPrefs.GetInt("IsPlayer2Turn_2"));
             }
 
             SetTurn();
@@ -282,11 +277,11 @@ namespace OnlinePenalty
 
         public void SetTurn()
         {
-            if (_isPlayer1Turn)
+            if (_isPlayerShooting)
             {
                 UIManager.Instance.Player1Panels();
             }
-            else if (_isPlayer2Turn)
+            else if (_isPlayerControllingGoalkeeper)
             {
                 UIManager.Instance.Player2Panels();
             }
@@ -294,59 +289,59 @@ namespace OnlinePenalty
 
         public void SwitchTurn()
         {
-            _isPlayer1Turn = !_isPlayer1Turn;
-            _isPlayer2Turn = !_isPlayer2Turn;
+            _isPlayerShooting = !_isPlayerShooting;
+            _isPlayerControllingGoalkeeper = !_isPlayerControllingGoalkeeper;
 
             if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
             {
-                PlayerPrefs.SetInt("IsPlayer1Turn", _isPlayer1Turn ? 1 : 0);
-                PlayerPrefs.SetInt("IsPlayer2Turn", _isPlayer2Turn ? 1 : 0);
-                Debug.Log("Player1Turn: " + _isPlayer1Turn);
-                Debug.Log("Player2Turn: " + _isPlayer2Turn);
+                PlayerPrefs.SetInt("_isPlayerShooting", _isPlayerShooting ? 1 : 0);
+                PlayerPrefs.SetInt("_isPlayerControllingGoalkeeper", _isPlayerControllingGoalkeeper ? 1 : 0);
+                //Debug.Log("Player1Turn: " + _isPlayerShooting);
+                //Debug.Log("Player2Turn: " + _isPlayerControllingGoalkeeper);
             }
             else if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
             {
-                PlayerPrefs.SetInt("IsPlayer1Turn_2", _isPlayer1Turn ? 1 : 0);
-                PlayerPrefs.SetInt("IsPlayer2Turn_2", _isPlayer2Turn ? 1 : 0);
-                Debug.Log("Player1Turn_2: " + _isPlayer1Turn);
-                Debug.Log("Player2Turn_2: " + _isPlayer2Turn);
+                PlayerPrefs.SetInt("_isPlayerShooting_2", _isPlayerShooting ? 1 : 0);
+                PlayerPrefs.SetInt("_isPlayerControllingGoalkeeper_2", _isPlayerControllingGoalkeeper ? 1 : 0);
+                //Debug.Log("Player1Turn_2: " + _isPlayerShooting);
+                //Debug.Log("Player2Turn_2: " + _isPlayerControllingGoalkeeper);
             }
         }
 
-        public bool IsPlayer1Turn()
+        public bool IsPlayerShooting()
         {
-            return _isPlayer1Turn;
+            return _isPlayerShooting;
         }
-        public bool IsPlayer2Turn()
+        public bool IsPlayerControllingGoalkeeper()
         {
-            return _isPlayer2Turn;
+            return _isPlayerControllingGoalkeeper;
         }
         #endregion
 
         #region Player1 and Player2 Tap to button
-      
-        public void IsPlayer1ButtonDone()
+
+        public void IsPlayerShootingButtonDone()
         {
-            _isPlayer1ButtonDone = true;
-            photonView.RPC("PunRPC_IsPlayer1ButtonDone", RpcTarget.All);
+            _isPlayerShootingButtonDone = true;
+            photonView.RPC("PunRPC_IsPlayerShootingButtonDone", RpcTarget.All);
         }
 
         [PunRPC]
-        void PunRPC_IsPlayer1ButtonDone()
+        void PunRPC_IsPlayerShootingButtonDone()
         {
-            _isPlayer1ButtonDone = true;
+            _isPlayerShootingButtonDone = true;
             StartShootAndSaving();
         }
-        public void IsPlayer2ButtonDone()
+        public void IsPlayerControllingGoalkeeperButtonDone()
         {
-            _isPlayer2ButtonDone = true;
-            photonView.RPC("PunRPC_IsPlayer2ButtonDone", RpcTarget.All);
+            _isPlayerControllingGoalkeeperButtonDone = true;
+            photonView.RPC("PunRPC_IsPlayerControllingGoalkeeperButtonDone", RpcTarget.All);
         }
 
         [PunRPC]
-        void PunRPC_IsPlayer2ButtonDone()
+        void PunRPC_IsPlayerControllingGoalkeeperButtonDone()
         {
-            _isPlayer2ButtonDone = true;
+            _isPlayerControllingGoalkeeperButtonDone = true;
             StartShootAndSaving();
         }
 
@@ -358,7 +353,7 @@ namespace OnlinePenalty
         [PunRPC]
         void PunRPC_StartShootAndSaving()
         {
-            if (_isPlayer1ButtonDone && _isPlayer2ButtonDone)
+            if (_isPlayerShootingButtonDone && _isPlayerControllingGoalkeeperButtonDone)
             {
                 StopCountdownTimer();
                 SoccerPlayerController.Instance.MultiplayerStartShooting();

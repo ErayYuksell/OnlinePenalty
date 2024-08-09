@@ -86,7 +86,7 @@ public class UIManager : MonoBehaviour
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
         {
-            if (MultiplayerController.Instance.IsPlayer1Turn())
+            if (MultiplayerController.Instance.IsPlayerShooting())
             {
                 OpenGoalCanvas();
                 Debug.Log("Player1GoalCanvas");
@@ -99,15 +99,15 @@ public class UIManager : MonoBehaviour
         }
         if (PhotonNetwork.LocalPlayer.ActorNumber == 2)
         {
-            if (MultiplayerController.Instance.IsPlayer2Turn())
-            {
-                OpenFailCanvas();
-                Debug.Log("Player2FailCanvas");
-            }
-            else
+            if (MultiplayerController.Instance.IsPlayerShooting())
             {
                 OpenGoalCanvas();
                 Debug.Log("Player2GoalCanvas");
+            }
+            else
+            {
+                OpenFailCanvas();
+                Debug.Log("Player2FailCanvas");
             }
         }
     }

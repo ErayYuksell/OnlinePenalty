@@ -63,17 +63,10 @@ public class SoccerPlayerController : MonoBehaviour
         }
         else
         {
-            if (MultiplayerController.Instance.IsPlayer1Turn())
+            if (MultiplayerController.Instance.IsPlayerShooting())
             {
-                MultiplayerController.Instance.IsPlayer1ButtonDone();
-                MultiplayerController.Instance.WhoTapToButton(true);
-                Debug.Log("Player1 tap to button");
-            }
-            else if (MultiplayerController.Instance.IsPlayer2Turn())
-            {
-                MultiplayerController.Instance.IsPlayer2ButtonDone();
-                MultiplayerController.Instance.WhoTapToButton(true);
-                Debug.Log("Player2 tap to button");
+                MultiplayerController.Instance.IsPlayerShootingButtonDone();
+                Debug.Log("Player shoot tap to button");
             }
         }
 
@@ -88,7 +81,7 @@ public class SoccerPlayerController : MonoBehaviour
     public void StartShooting()
     {
         animator.Play(penaltyKickAnim.name);
-        Debug.Log("Penalty Animasyonu calisti");
+        //Debug.Log("Penalty Animasyonu calisti");
         animationFinished = false;
     }
 

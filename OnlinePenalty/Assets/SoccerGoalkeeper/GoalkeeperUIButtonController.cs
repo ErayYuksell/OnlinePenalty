@@ -59,17 +59,10 @@ namespace OnlinePenalty
             isDrag = false;
             buttonRectTransform.gameObject.GetComponent<Button>().interactable = false;
 
-            if (MultiplayerController.Instance.IsPlayer1Turn())
+            if (MultiplayerController.Instance.IsPlayerControllingGoalkeeper())
             {
-                MultiplayerController.Instance.IsPlayer1ButtonDone();
-                MultiplayerController.Instance.WhoTapToButton(true);
-                Debug.Log("Goalkeeper Player1 tap to button");
-            }
-            else if (MultiplayerController.Instance.IsPlayer2Turn())
-            {
-                MultiplayerController.Instance.IsPlayer2ButtonDone();
-                MultiplayerController.Instance.WhoTapToButton(true);
-                Debug.Log("Goalkeeper Player2 tap to button");
+                MultiplayerController.Instance.IsPlayerControllingGoalkeeperButtonDone();
+                Debug.Log("Goalkeeper Player tap to button");
             }
         }
     }

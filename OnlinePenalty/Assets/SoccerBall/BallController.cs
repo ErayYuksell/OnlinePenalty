@@ -72,7 +72,7 @@ public class BallController : MonoBehaviour
         if (other.CompareTag("SoccerGoal") && !ballInside)
         {
             ballInside = true;
-            Debug.Log("Top Aglarda");
+            //Debug.Log("Top Aglarda");
             //StopBallMovement();
 
             UIManager.Instance.GoalAndFailCanvasSwitchTurn();
