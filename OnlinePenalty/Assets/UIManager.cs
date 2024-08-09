@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         goalCanvas.SetActive(true);
         yield return new WaitForSeconds(2);
-        SceneManager.LoadScene("Game");
+        PhotonNetwork.LoadLevel("Game");
     }
     IEnumerator IEOpenFailCanvas()
     {
@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         failCanvas.SetActive(true);
         yield return new WaitForSeconds(2);
-        SceneManager.LoadScene("Game");
+        PhotonNetwork.LoadLevel("Game");
     }
     public void CloseShootButton()
     {
@@ -82,7 +82,7 @@ public class UIManager : MonoBehaviour
         resultMultiCanvas.SetActive(true);
     }
 
-    public void GoalAndFailCanvasSwitchTurn()
+    public void GoalAndFailCanvasSwitchTurn() // gol atilan durumda canvas acilis durumu 
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber == 1)
         {
@@ -109,6 +109,20 @@ public class UIManager : MonoBehaviour
                 OpenFailCanvas();
                 Debug.Log("Player2FailCanvas");
             }
+        }
+    }
+
+    public void CanvasCaseBallOutside()
+    {
+        if (MultiplayerController.Instance.IsPlayerShooting())
+        {
+            OpenFailCanvas();
+            Debug.Log("FailCanvas");
+        }
+        if (MultiplayerController.Instance.IsPlayerControllingGoalkeeper())
+        {
+            OpenGoalCanvas();
+            Debug.Log("GoalCanvas");
         }
     }
     #endregion

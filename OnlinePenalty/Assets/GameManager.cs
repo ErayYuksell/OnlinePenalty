@@ -92,6 +92,11 @@ namespace OnlinePenalty
                 targetObj.gameObject.SetActive(false);
                 return targetObj.position; // O anki pozisyon bilgisini al
             }
+
+            public Vector3 RandomFailPoint()
+            {
+                return failShootPoints[UnityEngine.Random.Range(0, failShootPoints.Count)].transform.position;
+            }
         }
 
         [Serializable]
@@ -116,7 +121,7 @@ namespace OnlinePenalty
 
                 zones = new Dictionary<string, (RectTransform, float)>
                {
-                 { "Fail", (failPoint, 50f) },
+                 { "Fail", (failPoint, 20f) },
                  { "Green_1", (greenPoint_1, 20f) },
                  { "Green_2", (greenPoint_2, 20f) }
                };
@@ -171,7 +176,7 @@ namespace OnlinePenalty
                     return zone.force;
                 }
 
-                return 50f; // Default force
+                return 20f; // Default force
             }
 
             private bool IsWithinBounds(Vector3 arrowPos, RectTransform rect)

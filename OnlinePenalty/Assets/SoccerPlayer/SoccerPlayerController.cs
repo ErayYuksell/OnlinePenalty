@@ -20,6 +20,7 @@ public class SoccerPlayerController : MonoBehaviour
     [SerializeField] AnimationClip penaltyKickAnim;
 
     Vector3 targetPosition;
+    string arrowColor;
     private bool animationFinished = false;
     PhotonView photonView;
     private void Awake()
@@ -46,7 +47,7 @@ public class SoccerPlayerController : MonoBehaviour
     // Shoot butonuna tiklandiginda calisir 
     public void OnShootButtonPressed()
     {
-        string arrowColor = gameManager.shootColorSelection.GetArrowColor();
+        arrowColor = gameManager.shootColorSelection.GetArrowColor();
         Debug.Log("Arrow Color: " + arrowColor);
         gameManager.shootColorSelection.StopArrowMovement();
 
@@ -81,7 +82,7 @@ public class SoccerPlayerController : MonoBehaviour
     public void StartShooting()
     {
         animator.Play(penaltyKickAnim.name);
-        //Debug.Log("Penalty Animasyonu calisti");
+        Debug.Log("Penalty Animasyonu calisti");
         animationFinished = false;
     }
 
@@ -103,8 +104,18 @@ public class SoccerPlayerController : MonoBehaviour
     {
         Vector3 direction = (targetPos - ball.position).normalized;
         Vector3 finalForce = direction * kickForce; // Final kuvveti belirleniyor
-        //ballController.KickBall(targetPos, gameManager.shootColorSelection.BallMovementHightByColor(), 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
-        ballController.KickBall(direction, gameManager.shootColorSelection.BallMovementForceByColor());
+
+
+        if (arrowColor == "Fail")
+        {
+            targetPos = GameManager.Instance.targetMovement.RandomFailPoint();
+            ballController.FailKickBall(targetPos, 2, 1f, finalForce); // 2 high i temsil ediyor, 1 duration, daha iyi bir degerle daha iyi goruntu cikarabilirsin 
+        }
+        else
+        {
+            ballController.KickBall(direction, gameManager.shootColorSelection.BallMovementForceByColor());
+        }
+
 
         Debug.Log("Top hareketi basladi");
 
@@ -149,4 +160,6 @@ public class SoccerPlayerController : MonoBehaviour
             animator.Play(idle.name);
         }
     }
+
+    public bool IsAnimationComplete() { return animationFinished; }
 }

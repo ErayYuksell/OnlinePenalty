@@ -1959,6 +1959,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 849994021}
   m_CullTransparentMesh: 1
+--- !u!1 &872583579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3652204150315683030, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583580 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5230378228114352002, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583581 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4070160413099936070, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583582 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7514960675195426051, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583583 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 648617644618428773, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583584 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 592083462584482936, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583585 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4102509713520101626, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &872583586 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 118670383576983185, guid: 49989287001d6be46bc0f8e727a9e6d1, type: 3}
+  m_PrefabInstance: {fileID: 3423613833070512941}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &884631233
 GameObject:
   m_ObjectHideFlags: 0
@@ -4188,7 +4228,15 @@ MonoBehaviour:
     - {fileID: 3423613833070512945}
     - {fileID: 3423613833070512944}
     - {fileID: 3423613833070512943}
-    failShootPoints: []
+    failShootPoints:
+    - {fileID: 872583586}
+    - {fileID: 872583585}
+    - {fileID: 872583584}
+    - {fileID: 872583583}
+    - {fileID: 872583582}
+    - {fileID: 872583581}
+    - {fileID: 872583580}
+    - {fileID: 872583579}
     targetObj: {fileID: 3423613833070512942}
   shootColorSelection:
     barStart: -330

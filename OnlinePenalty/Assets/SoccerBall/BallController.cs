@@ -10,6 +10,8 @@ public class BallController : MonoBehaviour
     public static BallController Instance;
     private Rigidbody rb;
     bool ballInside = false;
+    bool ballOutside = true;
+    private float minimumVelocityThreshold = 0.0001f; // Minimum hız eşiği
     private void Awake()
     {
         if (Instance == null)
@@ -26,14 +28,17 @@ public class BallController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
     }
-
+    private void Update()
+    {
+        //CheckBallOutside();
+    }
     public void KickBall(Vector3 direction, float force)
     {
         rb.AddForce(direction * force, ForceMode.VelocityChange);
     }
 
 
-    public void KickBall(Vector3 targetPosition, float height, float duration, Vector3 finalForce)
+    public void FailKickBall(Vector3 targetPosition, float height, float duration, Vector3 finalForce)
     {
         StartCoroutine(SmoothKickBall(targetPosition, height, duration, finalForce));
     }
@@ -79,6 +84,30 @@ public class BallController : MonoBehaviour
 
             MultiplayerController.Instance.UpdateScore();
         }
+    }
+
+    // Topun hızı belli bir eşiğin altına düştüğünde top dışarıda kabul edilir
+    private void CheckBallOutside()
+    {
+        if (!ballInside && ballOutside && SoccerPlayerController.Instance.IsAnimationComplete() && rb.velocity.magnitude < minimumVelocityThreshold)
+        {
+            ballOutside = false;
+            Debug.Log("Top dışarıda kabul edildi");
+            HandleBallOutside(); // Top dışarıda kabul edildiğinde yapılacak işlemler
+        }
+    }
+
+    private void HandleBallOutside()
+    {
+        // Eğer top kaleye girmemişse ve hız eşiğinin altına düşmüşse
+        UIManager.Instance.CanvasCaseBallOutside();
+        MultiplayerController.Instance.SwitchTurn();
+        Debug.Log("Islemler tamam");
+    }
+
+    public bool IsBallInside()
+    {
+        return ballInside;
     }
 
 }
