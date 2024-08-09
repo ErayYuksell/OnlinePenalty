@@ -318,7 +318,7 @@ namespace OnlinePenalty
         }
         #endregion
 
-        #region Player1 and Player2 Tap to button
+        #region Does the PlayerShooting and PlayerControllingGoalkeeper Tap to button
 
         public void IsPlayerShootingButtonDone()
         {

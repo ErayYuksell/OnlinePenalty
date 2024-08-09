@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 1614773251888086031}
   m_Layer: 0
   m_Name: Ball
-  m_TagString: Untagged
+  m_TagString: SoccerBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -128,7 +128,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3191946275186635073}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 4e5d062c0dbc29b4086acc00e5e18173, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

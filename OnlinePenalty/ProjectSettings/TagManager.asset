@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Bullet
   - SoccerGoal
+  - Goalkeeper
+  - SoccerBall
   layers:
   - Default
   - TransparentFX

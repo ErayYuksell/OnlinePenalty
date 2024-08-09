@@ -123,5 +123,27 @@ namespace OnlinePenalty
                 return value >= min && value <= max;
             }
         }
+
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("SoccerBall"))
+            {
+                Rigidbody ballRigidbody = other.GetComponent<Rigidbody>();
+
+                if (ballRigidbody != null)
+                {
+                    // Topun kaleciye çarptığı noktada yön değişimi ve kuvvet uygulaması
+                    Vector3 reflectDirection = Vector3.Reflect(ballRigidbody.velocity.normalized, transform.forward);
+                    float reboundForce = ballRigidbody.velocity.magnitude * 0.5f; // Sekme kuvveti, topun hızına bağlı olarak ayarlanır
+
+                    ballRigidbody.velocity = reflectDirection * reboundForce;
+
+                    // Eğer top kalecinin kontrolüne girsin istiyorsanız, aşağıdaki satırı ekleyin
+                    // ballRigidbody.velocity = Vector3.zero; // Topu durdurmak için
+                }
+            }
+        }
+
     }
 }

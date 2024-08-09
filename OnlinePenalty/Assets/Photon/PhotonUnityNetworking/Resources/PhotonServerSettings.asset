@@ -53,6 +53,9 @@ MonoBehaviour:
   - PunRPC_StartCountdownTimer
   - PunRPC_StopCountdownTimer
   - PunRPC_MultiplayerShooting
+  - PunRPC_SetIsGainScore
+  - PunRPC_IsPlayerControllingGoalkeeperButtonDone
+  - PunRPC_IsPlayerShootingButtonDone
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
